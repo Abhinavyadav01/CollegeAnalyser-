@@ -45,6 +45,11 @@ st.sidebar.markdown('<div class="title">🧭 NIT NAVIGATOR</div>', unsafe_allow_
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
 st.sidebar.markdown("""
     <style>
+        [data-testid="stSidebar"]{
+            width: 300px !important;
+        }
+        [data-testid="stSidebarNav"]{
+            padding: 20px 10px;
         .hover-text {
             display: block;
             padding: 12px 16px;
