@@ -36,7 +36,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
     .title {
         font-family: 'Archivo Black', sans-serif;
-        font-size: 27px;
+        font-size: 26px;
         color: white;
     }
     </style>
@@ -45,11 +45,7 @@ st.sidebar.markdown('<div class="title">🧭 NIT NAVIGATOR</div>', unsafe_allow_
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
 st.sidebar.markdown("""
     <style>
-        [data-testid="stSidebar"]{
-            width: 300px !important;
-        }
-        [data-testid="stSidebarNav"]{
-            padding: 20px 10px;
+        
         .hover-text {
             display: block;
             padding: 12px 16px;
@@ -181,12 +177,21 @@ with cols[1]:
     transport = st.session_state.nitkey_3t
 
 if transport == "Railway Distance":
+    # data = {
+    #     'NIT Name': ['NIT Agartala',"NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
+    #                  "NIT Delhi","NIT Durgapur","NIT Goa","NIT Hamirpur","NIT Jaipur","NIT Jalandhar","NIT Jamshedpur","NIT Karnataka(Surathkal)",
+    #                  "NIT Kurukshetra","NIT Manipur","NIT Meghalaya","NIT Mizoram","NIT Nagaland","NIT Nagpur","NIT Patna","NIT Puducherry",
+    #                  "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)","NIT Uttarakhand","NIT Warangal"],
+    #     'Railway Distance (km)': [ 5.2, 7, 12, 9, 4, 3, 4.7, 2.9, 12, 2, 3.3, 4, 6, 2.3,
+    #                                5, 14, 15, 12, 10, 6.7, 7, 8.3, 5.4, 6, 17, 3, 8, 2, 1, 10, 5.5]
+    #
+    # }
     data = {
         'NIT Name': [
             'NIT Jalandhar', 'NIT Trichy', 'NIT Warangal', 'NIT Surathkal',
             'NIT Rourkela', 'NIT Patna', 'NIT Delhi', 'NIT Jaipur'
         ],
-        'Railway Distance (km)': [5.2, 1.1, 6.8, 3.4, 8.5, 2.3, 7.7, 3.1]
+        'Railway Distance (km)': [15.2, 1.1, 6.8, 3.4, 8.5, 2.3, 7.7, 3.1]
     }
     df = pd.DataFrame(data)
 
@@ -202,7 +207,7 @@ if transport == "Railway Distance":
     st.slider("Select Railway Distance Range (km):",
                 min_value=0.0,
                 max_value=round(orig_max_dist + 1, 1),
-                value=st.session_state.railway_distance_range, step=0.1, key ="nitkey_3s")
+                value=(orig_min_dist, orig_max_dist), step=0.1, key ="nitkey_3s")
 
     distance_range = st.session_state.nitkey_3s
     # Check if slider was touched (not at full range)
@@ -258,7 +263,8 @@ if transport == "Railway Distance":
             line=dict(color='lightgray', width=2),
             showlegend=False
         ))
-
+        global_min = df['Railway Distance (km)'].min()
+        global_max = df['Railway Distance (km)'].max()
         # Dots
         railway.add_trace(go.Scatter(
             x=filtered_df['Railway Distance (km)'],
@@ -268,6 +274,8 @@ if transport == "Railway Distance":
                 size=14,
                 color=filtered_df['Railway Distance (km)'],
                 colorscale='RdYlGn_r',
+                cmin=global_min,   # 👈 force color scale to cover full range
+                cmax=global_max,
                 colorbar=dict(
                     thickness=18,
                     len=0.85,
@@ -288,6 +296,119 @@ if transport == "Railway Distance":
         )
 
         st.plotly_chart(railway, use_container_width=True)
+
+elif transport == "Airport Distance":
+    data_2 = {
+        'NIT Name': ["NIT Agartala","NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
+        "NIT Delhi","NIT Durgapur","NIT Goa","NIT Hamirpur","NIT Jaipur","NIT Jalandhar","NIT Jamshedpur","NIT Karnataka(Surathkal)",
+        "NIT Kurukshetra","NIT Manipur","NIT Meghalaya","NIT Mizoram","NIT Nagaland","NIT Nagpur","NIT Patna","NIT Puducherry",
+        "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)",
+        "NIT Uttarakhand","NIT Warangal"],
+        'Airport Distance (km)': [26, 12, 34, 31, 14, 28, 20, 17, 34, 55, 11, 93, 14, 16,
+                                  90, 9, 30, 32, 28, 8, 6, 45, 15, 7, 125, 28, 14, 10, 14, 200, 15]
+
+
+    }
+    df_2 = pd.DataFrame(data_2)
+
+    # Store original min and max
+    orig_min_dist = float(df["Airport Distance (km)"].min())
+    orig_max_dist = float(df["Airport Distance (km)"].max())
+
+    # NIT selector
+    all_options = ["All"] + sorted(df["NIT Name"].unique().tolist())
+    st.multiselect("Select NIT(s):", options=all_options, default=st.session_state.selected_nits,key = "nitkey_3m")
+    selected = st.session_state.nitkey_3m
+    # Distance slider
+    st.slider("Select Airport Distance Range (km):",
+                min_value=0.0,
+                max_value=round(orig_max_dist + 1, 1),
+                value=st.session_state.railway_distance_range, step=10, key ="nitkey_3s")
+
+    distance_range = st.session_state.nitkey_3s
+    # Check if slider was touched (not at full range)
+    slider_changed = (distance_range[0] > orig_min_dist) or (distance_range[1] < orig_max_dist)
+
+    # Filtering logic
+    filtered_df = df.copy()
+
+    if "All" in selected:
+        filtered_df = df.copy()
+        show_plot = True
+    elif selected:
+        filtered_df = filtered_df[filtered_df["NIT Name"].isin(selected)]
+        show_plot = True
+    elif slider_changed:
+        # If no NIT selected but slider changed, show all NITs in that range
+        show_plot = True
+    else:
+        # No selection, and slider not moved → show nothing
+        st.info("Please select NIT(s) or adjust the distance slider to see the chart.")
+        show_plot = False
+
+    # Apply slider filtering always
+    if show_plot :
+        filtered_df = filtered_df[
+            (filtered_df["Airport Distance (km)"] >= distance_range[0]) &
+            (filtered_df["Airport Distance (km)"] <= distance_range[1])
+        ]
+
+    # If empty result
+    if show_plot and filtered_df.empty:
+        st.warning("No NITs match the selected filters.")
+    elif show_plot:
+        filtered_df = filtered_df.sort_values(by="Airport Distance (km)", ascending=True)
+
+        # Lollipop Plot
+        airport = go.Figure()
+
+        # Invisible anchor
+        airport.add_trace(go.Scatter(
+            x=[0]*len(filtered_df),
+            y=filtered_df['NIT Name'],
+            mode='markers',
+            marker=dict(color='rgba(0,0,0,0)'),
+            showlegend=False
+        ))
+
+        # Lines
+        airport.add_trace(go.Scatter(
+            x=filtered_df['Railway Distance (km)'],
+            y=filtered_df['NIT Name'],
+            mode='lines',
+            line=dict(color='lightgray', width=2),
+            showlegend=False
+        ))
+
+        # Dots
+        airport.add_trace(go.Scatter(
+            x=filtered_df['Railway Distance (km)'],
+            y=filtered_df['NIT Name'],
+            mode='markers',
+            marker=dict(
+                size=14,
+                color=filtered_df['Railway Distance (km)'],
+                colorscale='RdYlGn_r',
+                colorbar=dict(
+                    thickness=18,
+                    len=0.85,
+                    yanchor='middle',
+                    y=0.5
+                ),
+                line=dict(width=1, color='black')
+            ),
+            name='Distance (km)'
+        ))
+
+        airport.update_layout(
+            title="🚉 Railway Distance Lollipop Chart",
+            xaxis_title="Distance to Nearest Railway Station (km)",
+            yaxis=dict(categoryorder='array', categoryarray=filtered_df['NIT Name']),
+            plot_bgcolor='rgba(0,0,0,0)',
+            height=550
+        )
+
+        st.plotly_chart(airport, use_container_width=True)
 
 else :
     pass

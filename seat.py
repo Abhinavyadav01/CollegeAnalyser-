@@ -15,7 +15,7 @@ def plot_seat_distribution(df, nit_name):
     )
     fig.update_traces(
         textinfo='label+percent',
-        textfont_size=14,
+        textfont_size=13,
         insidetextorientation='auto',
         marker=dict(line=dict(color='white', width=2)),
         pull=[0.05] * len(df),
