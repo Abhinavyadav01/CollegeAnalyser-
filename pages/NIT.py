@@ -176,22 +176,16 @@ with cols[1]:
                  ,key = "nitkey_3t")
     transport = st.session_state.nitkey_3t
 
+
 if transport == "Railway Distance":
-    # data = {
-    #     'NIT Name': ['NIT Agartala',"NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
-    #                  "NIT Delhi","NIT Durgapur","NIT Goa","NIT Hamirpur","NIT Jaipur","NIT Jalandhar","NIT Jamshedpur","NIT Karnataka(Surathkal)",
-    #                  "NIT Kurukshetra","NIT Manipur","NIT Meghalaya","NIT Mizoram","NIT Nagaland","NIT Nagpur","NIT Patna","NIT Puducherry",
-    #                  "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)","NIT Uttarakhand","NIT Warangal"],
-    #     'Railway Distance (km)': [ 5.2, 7, 12, 9, 4, 3, 4.7, 2.9, 12, 2, 3.3, 4, 6, 2.3,
-    #                                5, 14, 15, 12, 10, 6.7, 7, 8.3, 5.4, 6, 17, 3, 8, 2, 1, 10, 5.5]
-    #
-    # }
     data = {
-        'NIT Name': [
-            'NIT Jalandhar', 'NIT Trichy', 'NIT Warangal', 'NIT Surathkal',
-            'NIT Rourkela', 'NIT Patna', 'NIT Delhi', 'NIT Jaipur'
-        ],
-        'Railway Distance (km)': [15.2, 1.1, 6.8, 3.4, 8.5, 2.3, 7.7, 3.1]
+        'NIT Name': ['NIT Agartala',"NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
+                     "NIT Delhi","NIT Durgapur","NIT Goa","NIT Hamirpur","NIT Jaipur","NIT Jalandhar","NIT Jamshedpur","NIT Karnataka(Surathkal)",
+                     "NIT Kurukshetra","NIT Manipur","NIT Meghalaya","NIT Mizoram","NIT Nagaland","NIT Nagpur","NIT Patna","NIT Puducherry",
+                     "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)","NIT Uttarakhand","NIT Warangal"],
+        'Railway Distance (km)': [ 5.2, 7, 12, 9, 4, 3, 4.7, 2.9, 12, 2, 3.3, 4, 6, 2.3,
+                                   5, 14, 15, 12, 10, 6.7, 7, 8.3, 5.4, 6, 17, 3, 8, 2, 1, 10, 5.5]
+
     }
     df = pd.DataFrame(data)
 
@@ -205,9 +199,10 @@ if transport == "Railway Distance":
     selected = st.session_state.nitkey_3m
     # Distance slider
     st.slider("Select Railway Distance Range (km):",
-                min_value=0.0,
-                max_value=round(orig_max_dist + 1, 1),
-                value=(orig_min_dist, orig_max_dist), step=0.1, key ="nitkey_3s")
+                min_value=0.0 +0,
+                max_value=round(orig_max_dist ,1),
+                value=(orig_min_dist-1, orig_max_dist),
+                step=0.1, key ="nitkey_3s")
 
     distance_range = st.session_state.nitkey_3s
     # Check if slider was touched (not at full range)
@@ -287,30 +282,37 @@ if transport == "Railway Distance":
             name='Distance (km)'
         ))
 
+        plot_height = max(550, len(filtered_df) * 40)  # 40 px per NIT for breathing space
+
         railway.update_layout(
             title="🚉 Railway Distance Lollipop Chart",
             xaxis_title="Distance to Nearest Railway Station (km)",
-            yaxis=dict(categoryorder='array', categoryarray=filtered_df['NIT Name']),
+            yaxis=dict(
+                categoryorder='array',
+                categoryarray=filtered_df['NIT Name'],
+                automargin=True  # prevent cutting labels
+            ),
             plot_bgcolor='rgba(0,0,0,0)',
-            height=550
+            height=plot_height,
+            margin=dict(l=160, r=30)  # extra left margin for long NIT names
         )
+
 
         st.plotly_chart(railway, use_container_width=True)
 
 elif transport == "Airport Distance":
-    data_2 = {
+    data = {
         'NIT Name': ["NIT Agartala","NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
         "NIT Delhi","NIT Durgapur","NIT Goa","NIT Hamirpur","NIT Jaipur","NIT Jalandhar","NIT Jamshedpur","NIT Karnataka(Surathkal)",
         "NIT Kurukshetra","NIT Manipur","NIT Meghalaya","NIT Mizoram","NIT Nagaland","NIT Nagpur","NIT Patna","NIT Puducherry",
         "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)",
         "NIT Uttarakhand","NIT Warangal"],
-        'Airport Distance (km)': [26, 12, 34, 31, 14, 28, 20, 17, 34, 55, 11, 93, 14, 16,
-                                  90, 9, 30, 32, 28, 8, 6, 45, 15, 7, 125, 28, 14, 10, 14, 200, 15]
+        'Airport Distance (km)': [26, 42, 34, 31, 34, 28, 80, 17, 34, 55, 110, 93, 14, 16,
+                                  90, 9, 30, 32, 78, 18, 6, 105, 15, 67, 125, 28, 64, 10, 23, 200, 15]
 
 
     }
-    df_2 = pd.DataFrame(data_2)
-
+    df = pd.DataFrame(data)
     # Store original min and max
     orig_min_dist = float(df["Airport Distance (km)"].min())
     orig_max_dist = float(df["Airport Distance (km)"].max())
@@ -321,9 +323,10 @@ elif transport == "Airport Distance":
     selected = st.session_state.nitkey_3m
     # Distance slider
     st.slider("Select Airport Distance Range (km):",
-                min_value=0.0,
-                max_value=round(orig_max_dist + 1, 1),
-                value=st.session_state.railway_distance_range, step=10, key ="nitkey_3s")
+                min_value=0.0 ,
+                max_value=round(orig_max_dist ,1),
+                value=(orig_min_dist-6, orig_max_dist),
+                step=0.1, key ="nitkey_3s")
 
     distance_range = st.session_state.nitkey_3s
     # Check if slider was touched (not at full range)
@@ -360,10 +363,10 @@ elif transport == "Airport Distance":
         filtered_df = filtered_df.sort_values(by="Airport Distance (km)", ascending=True)
 
         # Lollipop Plot
-        airport = go.Figure()
+        Airport = go.Figure()
 
         # Invisible anchor
-        airport.add_trace(go.Scatter(
+        Airport.add_trace(go.Scatter(
             x=[0]*len(filtered_df),
             y=filtered_df['NIT Name'],
             mode='markers',
@@ -372,23 +375,26 @@ elif transport == "Airport Distance":
         ))
 
         # Lines
-        airport.add_trace(go.Scatter(
-            x=filtered_df['Railway Distance (km)'],
+        Airport.add_trace(go.Scatter(
+            x=filtered_df['Airport Distance (km)'],
             y=filtered_df['NIT Name'],
             mode='lines',
             line=dict(color='lightgray', width=2),
             showlegend=False
         ))
-
+        global_min = df['Airport Distance (km)'].min()
+        global_max = df['Airport Distance (km)'].max()
         # Dots
-        airport.add_trace(go.Scatter(
-            x=filtered_df['Railway Distance (km)'],
+        Airport.add_trace(go.Scatter(
+            x=filtered_df['Airport Distance (km)'],
             y=filtered_df['NIT Name'],
             mode='markers',
             marker=dict(
                 size=14,
-                color=filtered_df['Railway Distance (km)'],
+                color=filtered_df['Airport Distance (km)'],
                 colorscale='RdYlGn_r',
+                cmin=global_min,   # 👈 force color scale to cover full range
+                cmax=global_max,
                 colorbar=dict(
                     thickness=18,
                     len=0.85,
@@ -400,15 +406,23 @@ elif transport == "Airport Distance":
             name='Distance (km)'
         ))
 
-        airport.update_layout(
-            title="🚉 Railway Distance Lollipop Chart",
-            xaxis_title="Distance to Nearest Railway Station (km)",
-            yaxis=dict(categoryorder='array', categoryarray=filtered_df['NIT Name']),
+        plot_height = max(550, len(filtered_df) * 40)  # 40 px per NIT for breathing space
+
+        Airport.update_layout(
+            title="🚉 Airport Distance Lollipop Chart",
+            xaxis_title="Distance to Nearest Airport (km)",
+            yaxis=dict(
+                categoryorder='array',
+                categoryarray=filtered_df['NIT Name'],
+                automargin=True  # prevent cutting labels
+            ),
             plot_bgcolor='rgba(0,0,0,0)',
-            height=550
+            height=plot_height,
+            margin=dict(l=160, r=30)  # extra left margin for long NIT names
         )
 
-        st.plotly_chart(airport, use_container_width=True)
+
+        st.plotly_chart(Airport, use_container_width=True)
 
 else :
     pass
@@ -420,6 +434,7 @@ st.markdown("---")
 st.markdown('<div id="section4"></div>', unsafe_allow_html=True)
 st.title("🪑 Seat Matrix")
 
+df = pd.read_csv("NITs_seats.csv")
 if 'seat_matrix_nit' not in st.session_state:
     st.session_state.seat_matrix_nit = "SELECT"
 nit_list = ["SELECT","NIT Agartala","NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
@@ -428,47 +443,80 @@ nit_list = ["SELECT","NIT Agartala","NIT Allahabad","NIT Andhra Pradesh","NIT Ar
         "NIT Raipur","NIT Rourkela","NIT Sikkim","NIT Silchar","NIT Srinagar","NIT Surat(SVNIT)","NIT Tiruchirappalli(Trichy)",
         "NIT Uttarakhand","NIT Warangal"]
 col1, col2 = st.columns(2)
+index = nit_list.index(st.session_state.seat_matrix_nit) if st.session_state.seat_matrix_nit in nit_list else 0
 with col2:
     st.markdown("<br>",unsafe_allow_html=True)
     st.selectbox("Choose  specific  NIT  to  see  its  Seat Distribution Matrix", nit_list
-        , index=nit_list.index(st.session_state.seat_matrix_nit), key = "nitkey_4")
+        , index= nit_list.index(st.session_state.seat_matrix_nit), key = "nitkey_4")
     selected_nit = st.session_state.nitkey_4
     if selected_nit == "SELECT":
         st.markdown("""<span style='font-size: 16px; font-weight: 600;'>This Pie chart contains total number of seats and their percentage(%) for Open, Gen-EWS, SC, ST, OBC-NCL and PwD all for Gender Neutral and also seats reserved of Female candidates. 
-                This data is extracted for all branches combined and seats reserved for home state students and other state students. 
-                Below the pie chart is the change in number of seats as whole for the specific institute from the last year.</span>""",unsafe_allow_html=True)
+                This data is extracted for all branches combined and seats reserved for home state students and other state students.</span>""",unsafe_allow_html=True)
     else :
         st.markdown("""<span style='font-size: 16px; font-weight: 600;'>This Pie chart contains total number of seats and their percentage(%) for Open, Gen-EWS, SC, ST, OBC-NCL and PwD all for Gender Neutral and also seats reserved of Female candidates. 
-                This data is extracted for all branches combined and seats reserved for home state students and other state students. 
-                Below the pie chart is the change in number of seats as whole for the specific institute from the last year.</span>
-                \n<span style='font-size: 16px;'><b>Institute having highest Open seats :</b><br>
-                <b>Institute having highest Gen-EWS seats :</b><br>
-                <b>Institute having highest SC seats :</b><br>
-                <b>Institute having highest ST seats :</b><br>
-                <b>Institute having highest OBC-NCL seats :</b><br>
-                <b>Institute having highest PwD seats :</b><br>
-                <b>Institute having highest Female-only seats :</b></span>""",unsafe_allow_html=True)
+                This data is extracted for all branches combined and seats reserved for home state students and other state students.</span>
+                \n<span style='font-size: 16px;'>
+                Institute having highest Gen-EWS seats : <b>NIT Jamshedpur</b><br>
+                Institute having highest SC seats : <b>NIT Delhi</b><br>
+                Institute having highest ST seats : <b>NIT Tiruchirappalli(Trichy)</b><br>
+                Institute having highest OBC-NCL seats : <b>NIT Rourkela</b><br>
+                Institute having highest PwD seats : <b>NIT Delhi</b><br>
+                Institute having highest Female-only seats : <b>NIT Bhopal</b></span>""",unsafe_allow_html=True)
 
 
 with col1:
-    from seat import plot_seat_distribution
     if selected_nit == "SELECT":
-        st.markdown("<br><br><br>",unsafe_allow_html=True)
-        st.markdown("""<span style='font-size: 14px;'><b>Institute having highest Open seats :</b><br>
-                <b>Institute having highest Gen-EWS seats :</b><br>
-                <b>Institute having highest SC seats :</b><br>
-                <b>Institute having highest ST seats :</b><br>
-                <b>Institute having highest OBC-NCL seats :</b><br>
-                <b>Institute having highest PwD seats :</b><br>
-                <b>Institute having highest Female-only seats :</b></span>""",unsafe_allow_html=True
+        st.markdown("<br><br>",unsafe_allow_html=True)
+        st.markdown("""<span style='font-size: 14px;'><br>
+                Institute having highest Gen-EWS seats : <b>NIT Jamshedpur</b><br>
+                Institute having highest SC seats : <b>NIT Delhi</b><br>
+                Institute having highest ST seats : <b>NIT Tiruchirappalli(Trichy)</b><br>
+                Institute having highest OBC-NCL seats : <b>NIT Rourkela</b><br>
+                Institute having highest PwD seats : <b>NIT Delhi</b><br>
+                Institute having highest Female-only seats : <b>NIT Bhopal</b></span>""",unsafe_allow_html=True
         )
-    elif selected_nit == "NIT Agartala":
-       df = pd.DataFrame(
-           {"Category": ["Open", "Gen-EWS", "SC", "ST", "OBC-NCL", "PwD", "Female-only"],
-           "Seats": [360, 93, 134, 174, 125, 56, 218] }
-       )
-       plot_seat_distribution(df, selected_nit)
-       st.caption("NIT ")
+    else:
+        st.markdown("<br>",unsafe_allow_html=True)
+        nit_row = df[df['NIT'] == selected_nit].iloc[0]
+        bright_colors = ['#ff4e50', '#fc913a', '#f9d62e', '#eae374', '#e2f4c7', '#70a1d7', '#97c1a9']
+        # Extract category columns and reshape for pie chart
+        categories = ['Open','Gen-EWS', 'SC', 'ST','OBC-NCL','PwD','Female-only', ]  # Change based on your actual columns
+        seat_counts = nit_row[categories].values
+        nit_df = pd.DataFrame({
+            "Category": categories,
+            "Seats": seat_counts
+        })
+
+        # Plot pie chart
+        fig = px.pie(
+            nit_df,
+            names='Category',
+            values='Seats',
+            hole=0.4,
+            color_discrete_sequence=bright_colors
+        )
+        fig.update_traces(
+            textinfo='label+percent',
+            textfont_size=13,
+            insidetextorientation='auto',
+            marker=dict(line=dict(color='white', width=2)),
+            pull=[0.05] * len(nit_df),
+            hoverlabel=dict(bgcolor='white', font_size=14, font_color='black')
+        )
+        fig.update_layout(
+            showlegend=False,
+            title={
+                'text': f'✨ <span style="color:#ff4e50;">{selected_nit.upper()}</span> Seat Distribution',
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=52, b=60)
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 # if st.button("Reset Selection"):
 #     st.session_state.seat_matrix_nit = "SELECT"
 
