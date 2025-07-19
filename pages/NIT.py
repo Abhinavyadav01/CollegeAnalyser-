@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from streamlit import session_state
 
 st.set_page_config(
-    page_title = "My Project",
+    page_title = "NIT Dashboard",
     layout = "wide"
 )
 
@@ -20,9 +20,12 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
     .heading{
         font-family: 'Archivo Black', sans-serif;
-        font-size: 70px;
+        font-size: 75px;
         display: flex;
         align-items: center;
+        background: linear-gradient(90deg, #B2F7EF, #A0EAC9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         justify-content: center;
         margin-top: 10px;
     }
@@ -78,6 +81,7 @@ st.markdown('<div id="section1"></div>', unsafe_allow_html=True)
 st.title("🏆 NIRF Ranking")
 from nirf import fig
 st.plotly_chart(fig, use_container_width=True)
+st.info("NITs which are not in the plot have 100+ rankings.")
 
 
 
