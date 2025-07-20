@@ -25,7 +25,7 @@ A web-based dashboard that helps JEE aspirants compare IITs and NITs using param
 
 ## 📷 Screenshots
 
-![App Screenshot](Screenshot 2025-07-20 092201.png)
+![Main Page](https://raw.githubusercontent.com/abhinavyadav01/CollegeAnalyser-/main/Screenshot%202025-07-20%20092201.png)
 
 ---
 
