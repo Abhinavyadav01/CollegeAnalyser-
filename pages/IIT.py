@@ -437,3 +437,221 @@ elif transport == "Airport Distance":
 
 else :
     pass
+
+
+
+# Section 4 - Seat Matrix
+st.markdown("---")
+st.markdown('<div id="section4"></div>', unsafe_allow_html=True)
+st.title("🪑 Seat Matrix")
+
+df = pd.read_csv("IITs_seats.csv")
+if 'seat_matrix_iit' not in st.session_state:
+    st.session_state.seat_matrix_iit = "SELECT"
+iit_list = ["SELECT","IIT Bhilai","IIT Bhubaneswar","IIT Bombay","IIT Delhi","IIT Dhanbad (ISM)","IIT Dharwad","IIT Gandhinagar",
+              "IIT Goa","IIT Guwahati","IIT Hyderabad","IIT Indore","IIT Jammu","IIT Jodhpur","IIT Kanpur","IIT Kharagpur",
+              "IIT Madras","IIT Mandi","IIT Nagpur","IIT Palakkad","IIT Patna","IIT Roorkee","IIT Ropar","IIT Tirupati"]
+col1, col2 = st.columns(2)
+index = iit_list.index(st.session_state.seat_matrix_iit) if st.session_state.seat_matrix_iit in iit_list else 0
+with col2:
+    st.markdown("<br>",unsafe_allow_html=True)
+    st.selectbox("Choose  specific  IIT  to  see  its  Seat Distribution Matrix", iit_list
+        , index= iit_list.index(st.session_state.seat_matrix_iit), key = "iitkey_4")
+    selected_iit = st.session_state.iitkey_4
+    if selected_iit == "SELECT":
+        st.markdown("""<span style='font-size: 16px; font-weight: 600;'>This Pie chart contains total number of seats and their percentage(%) for Open, Gen-EWS, SC, ST, OBC-NCL and PwD all for Gender Neutral and also seats reserved of Female candidates. 
+                This data is extracted for all branches combined and seats reserved for home state students and other state students.</span>""",unsafe_allow_html=True)
+    else :
+        st.markdown("""<span style='font-size: 16px; font-weight: 600;'>This Pie chart contains total number of seats and their percentage(%) for Open, Gen-EWS, SC, ST, OBC-NCL and PwD all for Gender Neutral and also seats reserved of Female candidates. 
+                This data is extracted for all branches combined and seats reserved for home state students and other state students.</span>
+                \n<span style='font-size: 16px;'>
+                Institute having highest Gen-EWS seats : <b>IIT Ropar</b><br>
+                Institute having highest SC seats : <b>IIT Palakkad</b><br>
+                Institute having highest ST seats : <b>IIT Guwahati</b><br>
+                Institute having highest OBC-NCL seats : <b>IIT Kanpur</b><br>
+                Institute having highest PwD seats : <b>IIT Guwahati</b><br>
+                Institute having highest Female-only seats : <b>IIT Kharagpur</b></span>""",unsafe_allow_html=True)
+
+
+with col1:
+    if selected_iit == "SELECT":
+        st.markdown("<br><br>",unsafe_allow_html=True)
+        st.markdown("""<span style='font-size: 14px;'><br>
+                Institute having highest Gen-EWS seats : <b>IIT Ropar</b><br>
+                Institute having highest SC seats : <b>IIT Palakkad</b><br>
+                Institute having highest ST seats : <b>IIT Guwahati</b><br>
+                Institute having highest OBC-NCL seats : <b>IIT Kanpur</b><br>
+                Institute having highest PwD seats : <b>IIT Guwahati</b><br>
+                Institute having highest Female-only seats : <b>IIT Kharagpur</b></span>""",unsafe_allow_html=True
+        )
+    else:
+        st.markdown("<br>",unsafe_allow_html=True)
+        iit_row = df[df['IIT'] == selected_iit].iloc[0]
+        bright_colors = ['#ff4e50', '#fc913a', '#f9d62e', '#eae374', '#e2f4c7', '#70a1d7', '#97c1a9']
+        # Extract category columns and reshape for pie chart
+        categories = ['Open','Gen-EWS', 'SC', 'ST','OBC-NCL','PwD','Female-only', ]  # Change based on your actual columns
+        seat_counts = iit_row[categories].values
+        iit_df = pd.DataFrame({
+            "Category": categories,
+            "Seats": seat_counts
+        })
+
+        # Plot pie chart
+        fig = px.pie(
+            iit_df,
+            names='Category',
+            values='Seats',
+            hole=0.4,
+            color_discrete_sequence=bright_colors
+        )
+        fig.update_traces(
+            textinfo='label+percent',
+            textfont_size=13,
+            insidetextorientation='auto',
+            marker=dict(line=dict(color='white', width=2)),
+            pull=[0.05] * len(iit_df),
+            hoverlabel=dict(bgcolor='white', font_size=14, font_color='black')
+        )
+        fig.update_layout(
+            showlegend=False,
+            title={
+                'text': f'✨ <span style="color:#ff4e50;">{selected_iit.upper()}</span> Seat Distribution',
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=52, b=60)
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+# if st.button("Reset Selection"):
+#     st.session_state.seat_matrix_nit = "SELECT"
+
+
+
+# Section 5 - Campus Area
+st.markdown("---")
+st.markdown('<div id="section5"></div>', unsafe_allow_html=True)
+st.title("🌳 Campus Area")
+
+if 'campus_area' not in st.session_state:
+    st.session_state.campus_area = "SELECT"
+st.markdown("""<span style='font-size: 16px; font-weight: 600;'>The campus area of Indian Institutes of Technology (IITs) varies across different institutes, with some having extensive land holdings.
+            For instance, IIT Kanpur's campus is spread over an area of 4.3 square kilometers (1,100 acres).
+            These campuses are designed to provide students with ample space for academic activities, research, and extracurricular pursuits.
+            They often include facilities such as libraries, laboratories, hostels, and recreational areas to support a comprehensive educational experience.
+            The size and layout of each IIT campus are tailored to meet the specific needs of the institution and its students.</span>""",unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+# Read CSV file
+df = pd.read_csv('IITs_Area.csv',header=None, names=['Institute', 'Area'])
+top11 = df.head(11)
+last12 = df.tail(12)
+
+st.selectbox("Select the list of IIT to check their Campus Area", ["SELECT","top11","last12"]
+            , index = ["SELECT","top11","last12"].index(st.session_state.campus_area), key = "iitkey_5")
+area = st.session_state.iitkey_5
+if area == "top11" :
+    # Plotly: Top 10 Horizontal Bar Chart with gradient
+    top_area = px.bar(
+        top11,
+        x='Area',
+        y='Institute',
+        orientation='h',
+        color='Area',
+        color_continuous_scale='Reds',
+        title='Top 11 IITs by Area',
+        text='Area'
+    )
+    top_area.update_layout(
+        yaxis={'categoryorder': 'total ascending'},
+        title_font_size=15,
+        height=450,  # 👈 increase plot height here
+        margin=dict(t=60, b=40, l=60, r=30)
+    )
+    st.plotly_chart(top_area)
+
+elif area == "last12" :
+    last_area = px.bar(
+    last12,
+    x='Area',
+    y='Institute',
+    orientation='h',
+    color='Area',
+    color_continuous_scale='Greens',
+    title='last 12 IITs by Area',
+    text='Area'
+    )
+    last_area.update_layout(
+        yaxis={'categoryorder': 'total ascending'},
+        title_font_size=18,
+        height=450,  # 👈 increase plot height here
+        margin=dict(t=60, b=40, l=60, r=30)  # 👈 optional padding to reduce clutter
+    )
+    st.plotly_chart(last_area)
+
+
+
+# Section 6 - Opening & Closing Ranks
+st.markdown("---")
+st.markdown('<div id="section6"></div>', unsafe_allow_html=True)
+st.title("🎯 Opening & Closing Ranks")
+if 'oac_category' not in st.session_state:
+    st.session_state.oac_category = "SELECT"
+if 'oac_institute' not in st.session_state:
+    st.session_state.oac_institute = "SELECT"
+if 'oac_department' not in st.session_state:
+    st.session_state.oac_department = "SELECT"
+
+# Load data
+df = pd.read_csv("oac values_IIT.csv")
+cols = st.columns(3)
+category_option = ["SELECT"] + sorted(df['Category'].unique())
+institute_option = ["SELECT"] + sorted(df['Institute'].unique())
+department_option = ["SELECT"] + sorted(df['Department'].unique())
+
+# Sidebar filters
+with cols[0]:
+    st.selectbox("Select Category", category_option,
+                index = category_option.index(st.session_state.oac_category), key = "iitkey_6c")
+    category = st.session_state.iitkey_6c
+with cols[1]:
+    st.selectbox("Select IIT", institute_option,
+                index = institute_option.index(st.session_state.oac_institute), key = "iitkey_6i")
+    institute = st.session_state.iitkey_6i
+with cols[2]:
+    st.selectbox("Select Department", department_option,
+                index = department_option.index(st.session_state.oac_department), key = "iitkey_6d")
+    department = st.session_state.iitkey_6d
+
+if (institute != "SELECT" and
+    department != "SELECT" and
+    category != "SELECT"):
+    # Filtered Data
+    filtered_df = df[(df['Institute'] == institute) &
+                     (df['Department'] == department) &
+                     (df['Category'] == category)]
+
+    # Melt the DataFrame for area plot (wide → long format)
+    melted_df = filtered_df.melt(id_vars='Round',
+                                 value_vars=['Opening Rank', 'Closing Rank'],
+                                 var_name='Rank Type',
+                                 value_name='Rank')
+
+    # Plot
+    oac_ranks = px.area(melted_df,
+                  x="Round",
+                  y="Rank",
+                  color="Rank Type",
+                  line_group="Rank Type",
+                  markers=True,
+                  title=f"Opening & Closing Ranks for {department} at {institute} ({category})")
+
+    oac_ranks.update_layout(yaxis_title="Rank", xaxis_title="JoSAA Round", legend_title="")
+
+    st.plotly_chart(oac_ranks, use_container_width=True)
+
+else:
+    st.warning("Please select all fields to display the chart.")
+
