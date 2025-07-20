@@ -23,12 +23,6 @@ A web-based dashboard that helps JEE aspirants compare IITs and NITs using param
 
 ---
 
-## 📷 Screenshots
-
-![Main Page](https://raw.githubusercontent.com/abhinavyadav01/CollegeAnalyser-/main/Screenshot%2025-07-20%092201.png)
-
----
-
 ## 🧪 How to Run Locally
 
 ```bash
