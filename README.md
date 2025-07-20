@@ -2,6 +2,10 @@
 
 A web-based dashboard that helps JEE aspirants compare IITs and NITs using parameters like campus area, location, seat matrix, and NIRF rankings.
 
+![Python](https://img.shields.io/badge/Python-3.9-blue.svg)
+![Streamlit](https://img.shields.io/badge/Made%20with-Streamlit-red)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 ---
 
 ## 🚀 Features
