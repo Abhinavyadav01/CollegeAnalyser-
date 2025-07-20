@@ -91,7 +91,7 @@ st.markdown('<div id="section2"></div>', unsafe_allow_html=True)
 st.title("📍 Institute Location")
 if 'location' not in st.session_state:
     st.session_state.location = "SELECT"
-df = pd.read_csv('NITs_Location_Updated.csv')
+df = pd.read_csv('NIT_Data/NITs_Location_Updated.csv')
 map = px.scatter_mapbox(df,
                         lat="Latitude",
                         lon="Longitude",
@@ -438,7 +438,7 @@ st.markdown("---")
 st.markdown('<div id="section4"></div>', unsafe_allow_html=True)
 st.title("🪑 Seat Matrix")
 
-df = pd.read_csv("NITs_seats.csv")
+df = pd.read_csv("NIT_Data/NITs_seats.csv")
 if 'seat_matrix_nit' not in st.session_state:
     st.session_state.seat_matrix_nit = "SELECT"
 nit_list = ["SELECT","NIT Agartala","NIT Allahabad","NIT Andhra Pradesh","NIT Arunachal Pradesh","NIT Bhopal","NIT Calicut",
@@ -540,7 +540,7 @@ st.markdown("""<span style='font-size: 16px; font-weight: 600;'>The campus area 
             The size and layout of each NIT campus are tailored to meet the specific needs of the institution and its students.</span>""",unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 # Read CSV file
-df = pd.read_csv('NITs_Area.csv',header=None, names=['Institute', 'Area'])
+df = pd.read_csv('NIT_Data/NITs_Area.csv',header=None, names=['Institute', 'Area'])
 top10 = df.head(10)
 middle10 = df.iloc[len(df)//2 - 5 : len(df)//2 + 5]
 last11 = df.tail(11)
@@ -622,7 +622,7 @@ if 'oac_department' not in st.session_state:
     st.session_state.oac_department = "SELECT"
 
 # Load data
-df = pd.read_csv("oac values.csv")
+df = pd.read_csv("NIT_Data/oac values.csv")
 cols = st.columns(3)
 category_option = ["SELECT"] + sorted(df['Category'].unique())
 institute_option = ["SELECT"] + sorted(df['Institute'].unique())

@@ -80,7 +80,7 @@ st.markdown("---")
 st.markdown('<div id="section1"></div>', unsafe_allow_html=True)
 st.title("🏆 NIRF Ranking")
 
-df = pd.read_csv("NIRF_IIT.csv",header=None, names=['IIT', 'NIRF Rank'])
+df = pd.read_csv("IIT_Data/NIRF_IIT.csv",header=None, names=['IIT', 'NIRF Rank'])
 
 # Plotting
 fig = px.bar(
@@ -110,7 +110,7 @@ st.markdown('<div id="section2"></div>', unsafe_allow_html=True)
 st.title("📍 Institute Location")
 if 'location' not in st.session_state:
     st.session_state.location = "SELECT"
-df = pd.read_csv('IITs_Location_Updated.csv')
+df = pd.read_csv('IIT_Data/IITs_Location_Updated.csv')
 map = px.scatter_mapbox(df,
                         lat="Latitude",
                         lon="Longitude",
@@ -445,7 +445,7 @@ st.markdown("---")
 st.markdown('<div id="section4"></div>', unsafe_allow_html=True)
 st.title("🪑 Seat Matrix")
 
-df = pd.read_csv("IITs_seats.csv")
+df = pd.read_csv("IIT_Data/IITs_seats.csv")
 if 'seat_matrix_iit' not in st.session_state:
     st.session_state.seat_matrix_iit = "SELECT"
 iit_list = ["SELECT","IIT Bhilai","IIT Bhubaneswar","IIT Bombay","IIT Delhi","IIT Dhanbad (ISM)","IIT Dharwad","IIT Gandhinagar",
@@ -545,7 +545,7 @@ st.markdown("""<span style='font-size: 16px; font-weight: 600;'>The campus area 
             The size and layout of each IIT campus are tailored to meet the specific needs of the institution and its students.</span>""",unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 # Read CSV file
-df = pd.read_csv('IITs_Area.csv',header=None, names=['Institute', 'Area'])
+df = pd.read_csv('IIT_Data/IITs_Area.csv',header=None, names=['Institute', 'Area'])
 top11 = df.head(11)
 last12 = df.tail(12)
 
@@ -605,7 +605,7 @@ if 'oac_department' not in st.session_state:
     st.session_state.oac_department = "SELECT"
 
 # Load data
-df = pd.read_csv("oac values_IIT.csv")
+df = pd.read_csv("IIT_Data/oac values_IIT.csv")
 cols = st.columns(3)
 category_option = ["SELECT"] + sorted(df['Category'].unique())
 institute_option = ["SELECT"] + sorted(df['Institute'].unique())

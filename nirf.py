@@ -5,7 +5,7 @@ import plotly.express as px
 # Sample data (replace this with your actual CSV or list)
 
 
-df = pd.read_csv("NIRF_NIT.csv",header=None, names=['NIT', 'NIRF Rank'])
+df = pd.read_csv("NIT_Data/NIRF_NIT.csv",header=None, names=['NIT', 'NIRF Rank'])
 df = df.head(21)
 
 
