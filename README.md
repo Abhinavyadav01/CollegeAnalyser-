@@ -25,7 +25,7 @@ A web-based dashboard that helps JEE aspirants compare IITs and NITs using param
 
 ## 📷 Screenshots
 
-![App Screenshot](https://your-screenshot-link.com)
+![App Screenshot](Screenshot 2025-07-20 092201.png)
 
 ---
 
